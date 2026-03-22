@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left"><span class="page-title">Officers Management</span></div>
+    </div>
+    <div class="content">
+
+      <!-- Filter Tabs -->
+      <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;">
+        <a href="/admin/adhikaris" class="btn <%= !filters.approved ? 'btn-primary' : 'btn-outline' %> btn-sm">All Officers</a>
+        <a href="/admin/adhikaris?approved=true" class="btn <%= filters.approved === 'true' ? 'btn-saffron' : 'btn-outline' %> btn-sm">
+          <i class="fas fa-check-circle"></i> Approved
+        </a>
+        <a href="/admin/adhikaris?approved=false" class="btn <%= filters.approved === 'false' ? 'btn-danger' : 'btn-outline' %> btn-sm">
+          <i class="fas fa-clock"></i> Pending Approval
+        </a>
+      </div>
+
+      <% if (filters.approved === 'false' && adhikaris.filter(a => !a.isApproved).length > 0) { %>
+        <div class="alert alert-warning" style="margin-bottom:1.25rem;">
+          <i class="fas fa-info-circle"></i>
+          <strong><%= adhikaris.filter(a => !a.isApproved).length %> officer(s)</strong> pending your approval. Review their credentials below.
+        </div>
+      <% } %>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Government Officers</h3>
+          <span style="font-size:0.8rem;color:var(--gray-600);"><%= adhikaris.length %> officers</span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Officer</th><th>Employee ID</th><th>Department</th>
+                <th>Designation</th><th>Jurisdiction</th><th>Status</th>
+                <th>Registered</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (adhikaris.length === 0) { %>
+                <tr><td colspan="8"><div class="empty-state"><div class="empty-icon">👮</div><h3>No officers found</h3></div></td></tr>
+              <% } %>
+              <% adhikaris.forEach(a => { %>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:0.6rem;">
+                      <div style="width:32px;height:32px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--white);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.85rem;flex-shrink:0;">
+                        <%= a.name.charAt(0).toUpperCase() %>
+                      </div>
+                      <div>
+                        <div style="font-weight:600;font-size:0.85rem;"><%= a.name %></div>
+                        <div style="font-size:0.72rem;color:var(--gray-400);"><%= a.email %></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.85rem;color:var(--navy);"><%= a.employeeId %></span></td>
+                  <td><span class="badge badge-primary" style="font-size:0.7rem;"><%= a.department?.name || '—' %></span></td>
+                  <td style="font-size:0.82rem;"><%= a.designation %></td>
+                  <td style="font-size:0.78rem;color:var(--gray-600);"><%= a.district %>, <%= a.state %></td>
+                  <td>
+                    <% if (a.isApproved) { %>
+                      <span class="badge badge-resolved"><i class="fas fa-check-circle"></i> Approved</span>
+                    <% } else { %>
+                      <span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                    <% } %>
+                  </td>
+                  <td style="font-size:0.75rem;color:var(--gray-600);"><%= new Date(a.createdAt).toLocaleDateString('en-IN') %></td>
+                  <td>
+                    <div style="display:flex;gap:0.35rem;flex-wrap:wrap;">
+                      <% if (!a.isApproved) { %>
+                        <form action="/admin/adhikaris/<%= a._id %>/approve" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-success btn-sm btn-icon" title="Approve Officer">
+                            <i class="fas fa-check"></i>
+                          </button>
+                        </form>
+                        <form action="/admin/adhikaris/<%= a._id %>/reject" method="POST" style="display:inline;" onsubmit="return confirm('Reject and delete this officer registration?')">
+                          <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Reject">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <span style="font-size:0.75rem;color:var(--success);"><i class="fas fa-check"></i> Active</span>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

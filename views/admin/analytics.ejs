@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left"><span class="page-title">Analytics & Insights</span></div>
+    </div>
+    <div class="content">
+
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-pie" style="color:var(--saffron);margin-right:0.5rem;"></i>By Category</h3></div>
+          <div class="card-body"><canvas id="catChart" height="260"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="fas fa-tachometer-alt" style="color:var(--saffron);margin-right:0.5rem;"></i>By Urgency</h3></div>
+          <div class="card-body"><canvas id="urgencyChart" height="260"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="fas fa-tasks" style="color:var(--saffron);margin-right:0.5rem;"></i>By Status</h3></div>
+          <div class="card-body"><canvas id="statusChart" height="220"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-line" style="color:var(--saffron);margin-right:0.5rem;"></i>Monthly Trend</h3></div>
+          <div class="card-body"><canvas id="monthlyChart" height="220"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-map-marker-alt" style="color:var(--saffron);margin-right:0.5rem;"></i>Top Districts by Grievances</h3></div>
+        <div class="card-body"><canvas id="districtChart" height="180"></canvas></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+  const COLORS = ['#0D1B3E','#FF9933','#138808','#0277BD','#D32F2F','#7B1FA2','#F57C00','#00796B','#5D4037'];
+
+  const byCategory = <%- byCategory %>;
+  const byUrgency  = <%- byUrgency %>;
+  const byStatus   = <%- byStatus %>;
+  const byDistrict = <%- byDistrict %>;
+  const monthly    = <%- monthly %>;
+
+  const MONTH_NAMES = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  if (byCategory.length) new Chart(document.getElementById('catChart'), {
+    type: 'doughnut',
+    data: { labels: byCategory.map(d=>d._id), datasets: [{ data: byCategory.map(d=>d.count), backgroundColor: COLORS, borderWidth: 2, borderColor:'#fff' }] },
+    options: { plugins: { legend: { position:'bottom', labels:{font:{family:'Noto Sans',size:11},padding:10} } } }
+  });
+
+  if (byUrgency.length) new Chart(document.getElementById('urgencyChart'), {
+    type: 'pie',
+    data: { labels: byUrgency.map(d=>d._id), datasets: [{ data: byUrgency.map(d=>d.count), backgroundColor:['#D32F2F','#F57C00','#2E7D32'], borderWidth:2, borderColor:'#fff' }] },
+    options: { plugins: { legend: { position:'bottom', labels:{font:{family:'Noto Sans',size:11},padding:10} } } }
+  });
+
+  if (byStatus.length) new Chart(document.getElementById('statusChart'), {
+    type: 'bar',
+    data: { labels: byStatus.map(d=>d._id.replace('_',' ')), datasets: [{ label:'Count', data: byStatus.map(d=>d.count), backgroundColor: COLORS, borderRadius:4 }] },
+    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'rgba(0,0,0,0.05)'}}, x:{grid:{display:false}}} }
+  });
+
+  if (monthly.length) new Chart(document.getElementById('monthlyChart'), {
+    type: 'line',
+    data: {
+      labels: monthly.map(d => `${MONTH_NAMES[d._id.month]} ${d._id.year}`),
+      datasets: [{ label:'Grievances', data: monthly.map(d=>d.count), borderColor:'#FF9933', backgroundColor:'rgba(255,153,51,0.1)', tension:0.4, fill:true, pointBackgroundColor:'#FF9933' }]
+    },
+    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'rgba(0,0,0,0.05)'}}, x:{grid:{display:false}}} }
+  });
+
+  if (byDistrict.length) new Chart(document.getElementById('districtChart'), {
+    type: 'bar',
+    data: { labels: byDistrict.map(d=>d._id||'Unknown'), datasets: [{ label:'Grievances', data: byDistrict.map(d=>d.count), backgroundColor:'#0D1B3E', borderRadius:4 }] },
+    options: { indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true, grid:{color:'rgba(0,0,0,0.05)'}}, y:{grid:{display:false}}} }
+  });
+</script>
+</body>
+</html>

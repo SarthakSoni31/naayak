@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/citizen-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left"><span class="page-title">My Grievances</span></div>
+      <div class="topbar-right">
+        <a href="/citizen/grievance/new" class="btn btn-saffron btn-sm"><i class="fas fa-plus"></i> File New</a>
+      </div>
+    </div>
+    <div class="content">
+
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+        <a href="/citizen/grievances" class="btn btn-sm <%= !filters.status ? 'btn-primary' : 'btn-outline' %>">All</a>
+        <% [['PENDING','clock'],['ASSIGNED','route'],['IN_PROGRESS','spinner'],['RESOLVED','check-circle'],['REJECTED','times-circle']].forEach(([s,icon]) => { %>
+          <a href="/citizen/grievances?status=<%= s %>" class="btn btn-sm <%= filters.status===s ? 'btn-primary' : 'btn-outline' %>">
+            <i class="fas fa-<%= icon %>"></i> <%= s.replace('_',' ') %>
+          </a>
+        <% }) %>
+      </div>
+
+      <% if (grievances.length === 0) { %>
+        <div class="card">
+          <div class="empty-state" style="padding:4rem;">
+            <div class="empty-icon">📋</div>
+            <h3>No grievances found</h3>
+            <p><%= filters.status ? 'No grievances with this status.' : "You haven't filed any grievances yet." %></p>
+            <a href="/citizen/grievance/new" class="btn btn-saffron" style="margin-top:1.25rem;"><i class="fas fa-plus"></i> File Your First Grievance</a>
+          </div>
+        </div>
+      <% } else { %>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <% grievances.forEach(g => { %>
+            <div class="card" style="border-left:4px solid <%=
+              g.urgency === 'HIGH' ? 'var(--danger)' :
+              g.urgency === 'MEDIUM' ? 'var(--warning)' : 'var(--success)'
+            %>;">
+              <div class="card-body" style="padding:1.1rem 1.5rem;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem;">
+                      <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.95rem;color:var(--navy);"><%= g.grievanceId %></span>
+                      <% const sm={PENDING:'pending',ASSIGNED:'assigned',IN_PROGRESS:'progress',RESOLVED:'resolved',REJECTED:'rejected'}; %>
+                      <span class="badge badge-<%= sm[g.status] %>"><%= g.status.replace('_',' ') %></span>
+                      <span class="badge badge-<%= g.urgency.toLowerCase() %>"><span class="urgency-dot <%= g.urgency %>"></span><%= g.urgency %></span>
+                      <span class="badge badge-primary" style="font-size:0.65rem;"><%= g.category %></span>
+                    </div>
+                    <h4 style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= g.title %></h4>
+                    <div style="font-size:0.78rem;color:var(--gray-600);display:flex;gap:1rem;flex-wrap:wrap;">
+                      <span><i class="fas fa-building" style="margin-right:0.25rem;"></i><%= g.department?.name || 'Unassigned' %></span>
+                      <span><i class="fas fa-calendar" style="margin-right:0.25rem;"></i><%= new Date(g.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></span>
+                      <% if (g.resolvedAt) { %>
+                        <span style="color:var(--success);"><i class="fas fa-check" style="margin-right:0.25rem;"></i>Resolved <%= new Date(g.resolvedAt).toLocaleDateString('en-IN') %></span>
+                      <% } %>
+                    </div>
+                  </div>
+                  <a href="/citizen/grievance/<%= g._id %>" class="btn btn-outline btn-sm" style="flex-shrink:0;">
+                    <i class="fas fa-eye"></i> Track
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+</body>
+</html>

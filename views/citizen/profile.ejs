@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/citizen-sidebar') %>
+  <div class="main-content">
+    <div class="topbar"><div class="topbar-left"><span class="page-title">My Profile</span></div></div>
+    <div class="content" style="max-width:640px;">
+      <div class="card">
+        <div class="card-body" style="text-align:center;padding:2.5rem 2rem 2rem;">
+          <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--saffron),var(--saffron-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:2.2rem;font-weight:700;color:var(--white);margin:0 auto 1rem;box-shadow:0 4px 16px rgba(255,153,51,0.3);">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </div>
+          <h2 style="font-size:1.6rem;margin-bottom:0.25rem;"><%= user.name %></h2>
+          <p style="color:var(--gray-600);font-size:0.85rem;"><%= user.district %>, <%= user.state %></p>
+          <span class="badge badge-saffron" style="margin-top:0.5rem;font-size:0.82rem;"><i class="fas fa-user"></i> Registered Citizen</span>
+        </div>
+        <div style="border-top:1px solid var(--gray-200);padding:1.5rem;">
+          <div class="form-section-title">Personal Information</div>
+          <div class="grievance-meta">
+            <div class="meta-item"><div class="meta-label">Full Name</div><div class="meta-value"><%= user.name %></div></div>
+            <div class="meta-item"><div class="meta-label">Email</div><div class="meta-value"><%= user.email %></div></div>
+            <div class="meta-item"><div class="meta-label">Phone</div><div class="meta-value"><%= user.phone %></div></div>
+            <div class="meta-item"><div class="meta-label">Aadhaar (masked)</div><div class="meta-value" style="font-family:'Rajdhani',sans-serif;font-weight:700;">XXXX-XXXX-<%= user.aadhaar ? user.aadhaar.slice(-4) : '****' %></div></div>
+            <div class="meta-item"><div class="meta-label">District</div><div class="meta-value"><%= user.district %></div></div>
+            <div class="meta-item"><div class="meta-label">State</div><div class="meta-value"><%= user.state %></div></div>
+          </div>
+          <% if (user.address) { %>
+            <div style="margin-top:1rem;">
+              <div style="font-size:0.72rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Address</div>
+              <div style="font-size:0.9rem;color:var(--text);"><%= user.address %></div>
+            </div>
+          <% } %>
+          <div style="margin-top:1.25rem;padding:0.85rem;background:var(--gray-100);border-radius:var(--radius-sm);font-size:0.78rem;color:var(--gray-600);display:flex;align-items:center;gap:0.5rem;">
+            <i class="fas fa-shield-alt" style="color:var(--navy);"></i>
+            Registered on <%= new Date(user.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) %>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;display:flex;gap:0.75rem;">
+        <a href="/citizen/grievance/new" class="btn btn-saffron"><i class="fas fa-plus"></i> File Grievance</a>
+        <a href="/citizen/grievances" class="btn btn-outline"><i class="fas fa-list"></i> My Grievances</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

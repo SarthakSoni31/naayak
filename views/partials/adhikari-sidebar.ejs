@@ -1,0 +1,59 @@
+<aside class="sidebar">
+  <a href="/adhikari/dashboard" class="sidebar-brand">
+    <div class="logo-icon">⚖️</div>
+    <div>
+      <div class="logo-text">ना<span>यक</span></div>
+    </div>
+  </a>
+
+  <div class="sidebar-role-badge">🏅 Officer Portal</div>
+
+  <div class="sidebar-user">
+    <div class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+    <div class="user-info">
+      <span class="user-name"><%= user.name %></span>
+      <span class="user-role"><%= user.designation || 'Government Officer' %></span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <span class="nav-section-title">Overview</span>
+    <a href="/adhikari/dashboard" class="nav-link <%= currentPath === '/adhikari/dashboard' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard
+    </a>
+
+    <span class="nav-section-title">Grievances</span>
+    <a href="/adhikari/grievances?view=mine" class="nav-link <%= currentPath === '/adhikari/grievances' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-file-alt"></i></span> My Grievances
+    </a>
+    <a href="/adhikari/grievances?view=mine&status=ASSIGNED" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-inbox"></i></span> Assigned to Me
+    </a>
+    <a href="/adhikari/grievances?view=mine&status=IN_PROGRESS" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-spinner"></i></span> In Progress
+    </a>
+    <a href="/adhikari/grievances?view=mine&urgency=HIGH" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-exclamation-circle"></i></span> High Urgency
+    </a>
+    <a href="/adhikari/grievances?view=dept" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-building"></i></span> Department Queue
+    </a>
+
+    <span class="nav-section-title">Account</span>
+    <a href="/adhikari/profile" class="nav-link <%= currentPath === '/adhikari/profile' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Profile
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <% if (user.department) { %>
+    <div style="padding:0.5rem 0.75rem;background:rgba(255,153,51,0.1);border-radius:var(--radius-sm);margin-bottom:0.75rem;font-size:0.72rem;color:rgba(255,255,255,0.6);">
+      <i class="fas fa-building" style="color:var(--saffron);margin-right:0.3rem;"></i>
+      <%= user.department.name || 'Department' %>
+    </div>
+    <% } %>
+    <a href="/logout" class="btn btn-outline btn-block btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+</aside>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/adhikari-sidebar') %>
+  <div class="main-content">
+    <div class="topbar"><div class="topbar-left"><span class="page-title">My Profile</span></div></div>
+    <div class="content" style="max-width:640px;">
+      <div class="card">
+        <div class="card-body" style="text-align:center;padding:2.5rem;">
+          <div style="width:80px;height:80px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;color:var(--white);margin:0 auto 1rem;">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </div>
+          <h2 style="font-size:1.5rem;margin-bottom:0.25rem;"><%= user.name %></h2>
+          <p style="color:var(--gray-600);font-size:0.85rem;"><%= user.designation %></p>
+          <span class="badge badge-saffron" style="margin-top:0.5rem;font-size:0.82rem;"><%= user.department?.name || 'Department' %></span>
+        </div>
+        <div style="border-top:1px solid var(--gray-200);padding:1.5rem;">
+          <div class="grievance-meta">
+            <div class="meta-item"><div class="meta-label">Email</div><div class="meta-value"><%= user.email %></div></div>
+            <div class="meta-item"><div class="meta-label">Phone</div><div class="meta-value"><%= user.phone %></div></div>
+            <div class="meta-item"><div class="meta-label">Employee ID</div><div class="meta-value" style="font-family:'Rajdhani',sans-serif;font-weight:700;"><%= user.employeeId %></div></div>
+            <div class="meta-item"><div class="meta-label">District</div><div class="meta-value"><%= user.district %></div></div>
+            <div class="meta-item"><div class="meta-label">State</div><div class="meta-value"><%= user.state %></div></div>
+            <div class="meta-item"><div class="meta-label">Account Status</div>
+              <div class="meta-value">
+                <% if (user.isApproved) { %><span class="badge badge-resolved"><i class="fas fa-check-circle"></i> Approved</span>
+                <% } else { %><span class="badge badge-pending">Pending Approval</span><% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

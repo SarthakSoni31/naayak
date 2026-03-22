@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/admin/grievances" style="color:var(--gray-600);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem;">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <span style="color:var(--gray-300);margin:0 0.5rem;">|</span>
+        <span class="page-title"><%= grievance.grievanceId %></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:1.5rem;align-items:start;">
+
+        <!-- Left: Grievance Details -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <!-- Header Card -->
+          <div class="card">
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+                <div>
+                  <h2 style="font-size:1.4rem;margin-bottom:0.5rem;"><%= grievance.title %></h2>
+                  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                    <% const sm = {PENDING:'pending',ASSIGNED:'assigned',IN_PROGRESS:'progress',RESOLVED:'resolved',REJECTED:'rejected',ESCALATED:'escalated'}; %>
+                    <span class="badge badge-<%= sm[grievance.status] %>" style="font-size:0.8rem;padding:0.3rem 0.8rem;"><%= grievance.status.replace('_',' ') %></span>
+                    <span class="badge badge-<%= grievance.urgency.toLowerCase() %>"><span class="urgency-dot <%= grievance.urgency %>"></span><%= grievance.urgency %> URGENCY</span>
+                    <span class="badge badge-primary"><%= grievance.category %></span>
+                    <% if (grievance.aiConfidence > 0) { %>
+                      <span class="ai-chip"><i class="fas fa-robot"></i> AI: <%= grievance.aiConfidence %>% confidence</span>
+                    <% } %>
+                  </div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:0.72rem;color:var(--gray-400);">Filed on</div>
+                  <div style="font-weight:700;font-size:0.9rem;"><%= new Date(grievance.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                </div>
+              </div>
+
+              <div class="form-section-title">Grievance Description</div>
+              <p style="font-size:0.88rem;line-height:1.7;color:var(--gray-800);background:var(--off-white);padding:1rem;border-radius:var(--radius-sm);border-left:3px solid var(--saffron);">
+                <%= grievance.description %>
+              </p>
+
+              <% if (grievance.attachments && grievance.attachments.length > 0) { %>
+                <div style="margin-top:1rem;">
+                  <div class="form-section-title">Attachments</div>
+                  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <% grievance.attachments.forEach(att => { %>
+                      <a href="<%= att %>" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;background:var(--gray-100);border-radius:var(--radius-sm);font-size:0.78rem;color:var(--navy);text-decoration:none;">
+                        <i class="fas fa-paperclip"></i> View Attachment
+                      </a>
+                    <% }) %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Citizen Info -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-user" style="color:var(--saffron);margin-right:0.5rem;"></i>Citizen Details</h3>
+            </div>
+            <div class="card-body">
+              <div class="grievance-meta">
+                <div class="meta-item"><div class="meta-label">Name</div><div class="meta-value"><%= grievance.citizen?.name || '—' %></div></div>
+                <div class="meta-item"><div class="meta-label">Email</div><div class="meta-value"><%= grievance.citizen?.email || '—' %></div></div>
+                <div class="meta-item"><div class="meta-label">Phone</div><div class="meta-value"><%= grievance.citizen?.phone || '—' %></div></div>
+                <div class="meta-item"><div class="meta-label">District</div><div class="meta-value"><%= grievance.citizen?.district || '—' %></div></div>
+                <div class="meta-item"><div class="meta-label">State</div><div class="meta-value"><%= grievance.citizen?.state || '—' %></div></div>
+                <div class="meta-item"><div class="meta-label">Aadhaar</div><div class="meta-value">XXXX-XXXX-<%= (grievance.citizen?.aadhaar || '0000').slice(-4) %></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-history" style="color:var(--saffron);margin-right:0.5rem;"></i>Activity Timeline</h3>
+            </div>
+            <div class="card-body">
+              <% if (!grievance.timeline || grievance.timeline.length === 0) { %>
+                <p style="color:var(--gray-400);font-size:0.85rem;">No activity yet.</p>
+              <% } else { %>
+                <div class="timeline">
+                  <% [...grievance.timeline].reverse().forEach(t => { %>
+                    <div class="timeline-item">
+                      <div class="timeline-time">
+                        <%= new Date(t.timestamp).toLocaleString('en-IN') %> · <%= t.updatedBy %> (<%= t.updatedByRole %>)
+                      </div>
+                      <div class="timeline-status"><%= t.status?.replace('_',' ') %></div>
+                      <div class="timeline-content"><%= t.message %></div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Actions -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem;position:sticky;top:80px;">
+
+          <!-- Assign Form -->
+          <div class="card">
+            <div class="card-header" style="background:var(--navy);">
+              <h3 class="card-title" style="color:var(--white);"><i class="fas fa-route" style="color:var(--saffron);margin-right:0.5rem;"></i>Assign Grievance</h3>
+            </div>
+            <div class="card-body">
+              <form action="/admin/grievances/<%= grievance._id %>/assign" method="POST">
+                <div class="form-group">
+                  <label class="form-label">Department *</label>
+                  <select name="department" class="form-control" required id="deptSelect" onchange="loadOfficers(this.value)">
+                    <option value="">Select Department</option>
+                    <% departments.forEach(d => { %>
+                      <option value="<%= d._id %>" <%= grievance.department?._id?.toString() === d._id.toString() ? 'selected' : '' %>><%= d.name %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Assign Officer (optional)</label>
+                  <select name="assignedTo" class="form-control" id="officerSelect">
+                    <option value="">Department Queue (no specific officer)</option>
+                    <% adhikaris.forEach(a => { %>
+                      <option value="<%= a._id %>" <%= grievance.assignedTo?._id?.toString() === a._id.toString() ? 'selected' : '' %>><%= a.name %> — <%= a.designation %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Override Urgency</label>
+                  <select name="urgency" class="form-control">
+                    <% ['HIGH','MEDIUM','LOW'].forEach(u => { %>
+                      <option value="<%= u %>" <%= grievance.urgency === u ? 'selected' : '' %>><%= u %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-saffron btn-block">
+                  <i class="fas fa-paper-plane"></i> Assign & Route
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Status Update -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-edit" style="color:var(--saffron);margin-right:0.5rem;"></i>Update Status</h3>
+            </div>
+            <div class="card-body">
+              <form action="/admin/grievances/<%= grievance._id %>/status" method="POST">
+                <div class="form-group">
+                  <label class="form-label">New Status</label>
+                  <select name="status" class="form-control" required>
+                    <% ['PENDING','ASSIGNED','IN_PROGRESS','RESOLVED','REJECTED','ESCALATED'].forEach(s => { %>
+                      <option value="<%= s %>" <%= grievance.status === s ? 'selected' : '' %>><%= s.replace('_',' ') %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Remark / Note</label>
+                  <textarea name="message" class="form-control" rows="2" placeholder="Optional admin note..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fas fa-save"></i> Update Status
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Current Assignment Info -->
+          <% if (grievance.assignedTo) { %>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-user-tie" style="color:var(--saffron);margin-right:0.5rem;"></i>Assigned Officer</h3>
+            </div>
+            <div class="card-body">
+              <div style="font-weight:700;color:var(--navy);"><%= grievance.assignedTo.name %></div>
+              <div style="font-size:0.82rem;color:var(--gray-600);"><%= grievance.assignedTo.designation %></div>
+              <div style="font-size:0.82rem;color:var(--gray-600);"><%= grievance.assignedTo.email %></div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function loadOfficers(deptId) {
+    if (!deptId) return;
+    const res = await fetch(`/api/departments/${deptId}/officers`);
+    const data = await res.json();
+    const sel = document.getElementById('officerSelect');
+    sel.innerHTML = '<option value="">Department Queue (no specific officer)</option>';
+    data.adhikaris.forEach(a => {
+      sel.innerHTML += `<option value="${a._id}">${a.name} — ${a.designation}</option>`;
+    });
+  }
+</script>
+</body>
+</html>

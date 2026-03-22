@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">All Grievances</span>
+      </div>
+      <div class="topbar-right">
+        <a href="/admin/dashboard" class="topbar-btn" title="Dashboard"><i class="fas fa-home"></i></a>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Filters -->
+      <form method="GET" action="/admin/grievances">
+        <div class="filters-bar">
+          <i class="fas fa-filter" style="color:var(--gray-400);"></i>
+          <select name="status" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <% ['PENDING','ASSIGNED','IN_PROGRESS','RESOLVED','REJECTED','ESCALATED'].forEach(s => { %>
+              <option value="<%= s %>" <%= filters.status === s ? 'selected' : '' %>><%= s.replace('_',' ') %></option>
+            <% }) %>
+          </select>
+          <select name="urgency" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Urgencies</option>
+            <% ['HIGH','MEDIUM','LOW'].forEach(u => { %>
+              <option value="<%= u %>" <%= filters.urgency === u ? 'selected' : '' %>><%= u %></option>
+            <% }) %>
+          </select>
+          <select name="category" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            <% ['Infrastructure','Health','Utilities','Education','Sanitation','Police','Revenue','Agriculture','Other'].forEach(c => { %>
+              <option value="<%= c %>" <%= filters.category === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+          <% if (filters.status || filters.urgency || filters.category) { %>
+            <a href="/admin/grievances" class="btn btn-outline btn-sm">
+              <i class="fas fa-times"></i> Clear
+            </a>
+          <% } %>
+        </div>
+      </form>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Grievances</h3>
+          <span style="font-size:0.8rem;color:var(--gray-600);">Page <%= currentPage %> of <%= totalPages %></span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Citizen</th><th>Title</th><th>Category</th>
+                <th>Urgency</th><th>Status</th><th>Department</th><th>Date</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (grievances.length === 0) { %>
+                <tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📂</div><h3>No grievances found</h3><p>Try adjusting filters</p></div></td></tr>
+              <% } %>
+              <% grievances.forEach(g => { %>
+                <tr>
+                  <td><a href="/admin/grievances/<%= g._id %>" style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--navy);text-decoration:none;font-size:0.88rem;"><%= g.grievanceId %></a></td>
+                  <td>
+                    <div style="font-weight:600;font-size:0.83rem;"><%= g.citizen?.name || '—' %></div>
+                    <div style="font-size:0.72rem;color:var(--gray-400);"><%= g.citizen?.district %></div>
+                  </td>
+                  <td style="max-width:180px;"><span style="font-size:0.83rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<%= g.title %>"><%= g.title %></span></td>
+                  <td><span class="badge badge-primary" style="font-size:0.68rem;"><%= g.category %></span></td>
+                  <td>
+                    <span class="badge badge-<%= g.urgency.toLowerCase() %>">
+                      <span class="urgency-dot <%= g.urgency %>"></span><%= g.urgency %>
+                    </span>
+                  </td>
+                  <td>
+                    <% const sm = {PENDING:'pending',ASSIGNED:'assigned',IN_PROGRESS:'progress',RESOLVED:'resolved',REJECTED:'rejected',ESCALATED:'escalated'}; %>
+                    <span class="badge badge-<%= sm[g.status] %>"><%= g.status.replace('_',' ') %></span>
+                  </td>
+                  <td style="font-size:0.78rem;color:var(--gray-600);"><%= g.department?.name || '—' %></td>
+                  <td style="font-size:0.75rem;color:var(--gray-600);"><%= new Date(g.createdAt).toLocaleDateString('en-IN') %></td>
+                  <td>
+                    <div style="display:flex;gap:0.3rem;">
+                      <a href="/admin/grievances/<%= g._id %>" class="btn btn-outline btn-sm btn-icon" title="View & Assign"><i class="fas fa-eye"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+        <div style="padding:1rem 1.5rem;display:flex;align-items:center;justify-content:flex-end;gap:0.5rem;border-top:1px solid var(--gray-100);">
+          <% for (let p = 1; p <= totalPages; p++) { %>
+            <a href="?page=<%= p %>&status=<%= filters.status||'' %>&urgency=<%= filters.urgency||'' %>&category=<%= filters.category||'' %>"
+               style="padding:0.35rem 0.65rem;border-radius:var(--radius-sm);font-size:0.82rem;text-decoration:none;
+                      background:<%= p === currentPage ? 'var(--navy)' : 'var(--gray-100)' %>;
+                      color:<%= p === currentPage ? 'var(--white)' : 'var(--text)' %>;">
+              <%= p %>
+            </a>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

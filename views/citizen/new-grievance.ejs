@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/citizen-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/citizen/dashboard" style="color:var(--gray-600);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <span style="color:var(--gray-300);margin:0 0.5rem;">|</span>
+        <span class="page-title">File New Grievance</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div style="max-width:760px;">
+
+        <% if (error) { %><div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div><% } %>
+
+        <!-- AI Info Banner -->
+        <div style="background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:var(--radius);padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;">
+          <div style="width:44px;height:44px;background:rgba(255,153,51,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🤖</div>
+          <div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--white);font-size:1rem;">AI-Powered Routing</div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.6);">Your grievance will be automatically classified by category, urgency detected, and routed to the correct department.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="fas fa-file-alt" style="color:var(--saffron);margin-right:0.5rem;"></i>Grievance Details</h3></div>
+          <div class="card-body">
+            <form action="/citizen/grievance/new" method="POST" enctype="multipart/form-data">
+
+              <div class="form-section-title">Your Complaint</div>
+
+              <div class="form-group">
+                <label class="form-label">Grievance Title *</label>
+                <input type="text" name="title" id="grievanceTitle" class="form-control" placeholder="Brief title describing your issue (e.g. 'Road damaged near main market')" required oninput="triggerClassify()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Detailed Description *
+                  <span style="font-size:0.68rem;color:var(--gray-400);font-weight:400;text-transform:none;letter-spacing:0;"> (Be as specific as possible — location, date, what happened)</span>
+                </label>
+                <textarea name="description" id="grievanceDesc" class="form-control" rows="5" placeholder="Describe your grievance in detail. Include: what the problem is, when it started, how it's affecting you, and any steps you've already taken..." required oninput="triggerClassify()"></textarea>
+              </div>
+
+              <!-- AI Preview Box -->
+              <div class="ai-preview" id="aiPreview">
+                <div class="ai-preview-item">
+                  <div class="ai-label">🏷️ Category</div>
+                  <div class="ai-value" id="aiCategory">—</div>
+                </div>
+                <div class="ai-preview-item">
+                  <div class="ai-label">⚡ Urgency</div>
+                  <div class="ai-value" id="aiUrgency">—</div>
+                </div>
+                <div class="ai-preview-item">
+                  <div class="ai-label">🎯 AI Confidence</div>
+                  <div class="ai-value" id="aiConfidence">—</div>
+                </div>
+                <div class="ai-preview-item">
+                  <div class="ai-label">🏛️ Routes To</div>
+                  <div class="ai-value" id="aiDept">—</div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:1.25rem;">
+                <label class="form-label">Language of Grievance</label>
+                <select name="language" class="form-control">
+                  <option value="en">English</option>
+                  <option value="hi">Hindi (हिंदी)</option>
+                  <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                  <option value="ta">Tamil (தமிழ்)</option>
+                  <option value="te">Telugu (తెలుగు)</option>
+                  <option value="mr">Marathi (मराठी)</option>
+                  <option value="gu">Gujarati (ગુજરાતી)</option>
+                  <option value="bn">Bengali (বাংলা)</option>
+                  <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                  <option value="ml">Malayalam (മലയാളം)</option>
+                  <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                </select>
+              </div>
+
+              <div class="form-section-title" style="margin-top:1.25rem;">Location Details</div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">State</label>
+                  <input type="text" name="state" class="form-control" value="<%= user.state %>" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">District</label>
+                  <input type="text" name="district" class="form-control" value="<%= user.district %>" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Specific Location / Address</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Near Ram Mandir, Main Bazar, Sector 12" />
+              </div>
+
+              <div class="form-section-title" style="margin-top:1.25rem;">Attachments (Optional)</div>
+
+              <div class="form-group">
+                <label class="form-label">Photos / Documents
+                  <span style="font-size:0.68rem;color:var(--gray-400);font-weight:400;text-transform:none;letter-spacing:0;"> (Max 3 files, 5MB each — JPG, PNG, PDF)</span>
+                </label>
+                <input type="file" name="attachments" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.webp" />
+              </div>
+
+              <div style="display:flex;gap:0.75rem;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--gray-200);">
+                <button type="submit" class="btn btn-saffron btn-lg">
+                  <i class="fas fa-paper-plane"></i> Submit Grievance
+                </button>
+                <a href="/citizen/dashboard" class="btn btn-outline btn-lg">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let debounceTimer;
+  function triggerClassify() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(classifyGrievance, 600);
+  }
+
+  async function classifyGrievance() {
+    const title = document.getElementById('grievanceTitle').value;
+    const desc = document.getElementById('grievanceDesc').value;
+    const text = `${title} ${desc}`.trim();
+    if (text.length < 10) return;
+
+    try {
+      const res = await fetch('/citizen/grievance/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+      document.getElementById('aiCategory').textContent = data.category;
+      document.getElementById('aiUrgency').textContent = data.urgency;
+      document.getElementById('aiConfidence').textContent = data.confidence + '%';
+      document.getElementById('aiDept').textContent = data.suggestedDeptCode;
+      document.getElementById('aiPreview').classList.add('visible');
+    } catch (e) {}
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+  <div class="auth-wrapper">
+
+    <!-- Left Brand Panel -->
+    <div class="auth-brand">
+      <div class="emblem">⚖️</div>
+      <h1>ना<span>यक</span></h1>
+      <p>AI-Powered Grievance Redressal System for Transparent, Efficient Governance</p>
+
+      <div style="margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
+          <div style="width:32px;height:32px;background:rgba(255,153,51,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--saffron);"><i class="fas fa-brain"></i></div>
+          <span>NLP-based automatic grievance classification</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
+          <div style="width:32px;height:32px;background:rgba(255,153,51,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--saffron);"><i class="fas fa-bolt"></i></div>
+          <span>Smart urgency detection & priority routing</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
+          <div style="width:32px;height:32px;background:rgba(255,153,51,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--saffron);"><i class="fas fa-language"></i></div>
+          <span>Multi-language support across Indian languages</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
+          <div style="width:32px;height:32px;background:rgba(255,153,51,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--saffron);"><i class="fas fa-chart-bar"></i></div>
+          <span>Real-time dashboard analytics for officials</span>
+        </div>
+      </div>
+
+      <p class="auth-tagline">"Where Governance Doesn't Disappear" — Team 404 Found</p>
+    </div>
+
+    <!-- Right Auth Card -->
+    <div class="auth-card">
+      <div style="margin-bottom:1.75rem;">
+        <p style="font-size:0.72rem;font-weight:700;color:var(--gray-400);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.35rem;">GOVERNMENT OF INDIA</p>
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to access your portal</p>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="auth-tabs" id="roleTabs">
+        <button class="auth-tab <%= role === 'citizen' ? 'active' : '' %>" onclick="switchRole('citizen')">
+          <i class="fas fa-user" style="margin-right:0.3rem;font-size:0.75rem;"></i>Citizen
+        </button>
+        <button class="auth-tab <%= role === 'adhikari' ? 'active' : '' %>" onclick="switchRole('adhikari')">
+          <i class="fas fa-id-badge" style="margin-right:0.3rem;font-size:0.75rem;"></i>Adhikari
+        </button>
+        <button class="auth-tab <%= role === 'admin' ? 'active' : '' %>" onclick="switchRole('admin')">
+          <i class="fas fa-shield-alt" style="margin-right:0.3rem;font-size:0.75rem;"></i>Admin
+        </button>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-circle"></i>
+          <%= error %>
+        </div>
+      <% } %>
+
+      <!-- Citizen Form -->
+      <div id="form-citizen" class="role-form" style="<%= role !== 'citizen' ? 'display:none' : '' %>">
+        <form action="/login/citizen" method="POST">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div style="position:relative;">
+              <i class="fas fa-envelope" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="email" name="email" class="form-control" style="padding-left:2.3rem;" placeholder="your@email.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div style="position:relative;">
+              <i class="fas fa-lock" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="password" name="password" id="citizenPass" class="form-control" style="padding-left:2.3rem;padding-right:2.5rem;" placeholder="••••••••" required />
+              <button type="button" onclick="togglePass('citizenPass')" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:0.85rem;"><i class="fas fa-eye"></i></button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-saffron btn-block btn-lg" style="margin-top:0.5rem;">
+            <i class="fas fa-sign-in-alt"></i> Login as Citizen
+          </button>
+        </form>
+        <p style="text-align:center;margin-top:1.25rem;font-size:0.85rem;color:var(--gray-600);">
+          New citizen? <a href="/register/citizen" style="color:var(--saffron);font-weight:600;text-decoration:none;">Register here</a>
+        </p>
+      </div>
+
+      <!-- Adhikari Form -->
+      <div id="form-adhikari" class="role-form" style="<%= role !== 'adhikari' ? 'display:none' : '' %>">
+        <form action="/login/adhikari" method="POST">
+          <div class="form-group">
+            <label class="form-label">Official Email</label>
+            <div style="position:relative;">
+              <i class="fas fa-envelope" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="email" name="email" class="form-control" style="padding-left:2.3rem;" placeholder="officer@gov.in" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div style="position:relative;">
+              <i class="fas fa-lock" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="password" name="password" id="adhikariPass" class="form-control" style="padding-left:2.3rem;padding-right:2.5rem;" placeholder="••••••••" required />
+              <button type="button" onclick="togglePass('adhikariPass')" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:0.85rem;"><i class="fas fa-eye"></i></button>
+            </div>
+          </div>
+          <div style="background:var(--info-light);border-radius:var(--radius-sm);padding:0.6rem 0.85rem;margin-bottom:1rem;font-size:0.78rem;color:var(--info);display:flex;gap:0.4rem;align-items:flex-start;">
+            <i class="fas fa-info-circle" style="margin-top:0.1rem;"></i>
+            Account must be approved by Admin before login.
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            <i class="fas fa-sign-in-alt"></i> Login as Adhikari
+          </button>
+        </form>
+        <p style="text-align:center;margin-top:1.25rem;font-size:0.85rem;color:var(--gray-600);">
+          New officer? <a href="/register/adhikari" style="color:var(--saffron);font-weight:600;text-decoration:none;">Register here</a>
+        </p>
+      </div>
+
+      <!-- Admin Form -->
+      <div id="form-admin" class="role-form" style="<%= role !== 'admin' ? 'display:none' : '' %>">
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+          <div style="padding:0.5rem 1.25rem;background:rgba(13,27,62,0.07);border:1px solid rgba(13,27,62,0.15);border-radius:20px;font-size:0.75rem;font-weight:700;color:var(--navy);letter-spacing:0.08em;">
+            🔒 RESTRICTED ACCESS
+          </div>
+        </div>
+        <form action="/login/admin" method="POST">
+          <div class="form-group">
+            <label class="form-label">Admin Email</label>
+            <div style="position:relative;">
+              <i class="fas fa-shield-alt" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="email" name="email" class="form-control" style="padding-left:2.3rem;" placeholder="admin@naayak.gov.in" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div style="position:relative;">
+              <i class="fas fa-lock" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.85rem;"></i>
+              <input type="password" name="password" id="adminPass" class="form-control" style="padding-left:2.3rem;padding-right:2.5rem;" placeholder="••••••••" required />
+              <button type="button" onclick="togglePass('adminPass')" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:0.85rem;"><i class="fas fa-eye"></i></button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="background:var(--navy);">
+            <i class="fas fa-sign-in-alt"></i> Admin Login
+          </button>
+        </form>
+      </div>
+
+      <div style="margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--gray-200);text-align:center;">
+        <p style="font-size:0.72rem;color:var(--gray-400);">
+          Naayak v1.0 · Hackathon Build · Team 404 Found<br/>
+          <span style="color:var(--gray-200);">NIC · Ministry of Electronics & IT</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchRole(role) {
+      document.querySelectorAll('.role-form').forEach(f => f.style.display = 'none');
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('form-' + role).style.display = 'block';
+      event.target.classList.add('active');
+    }
+    function togglePass(id) {
+      const el = document.getElementById(id);
+      el.type = el.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+</body>
+</html>

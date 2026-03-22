@@ -1,0 +1,75 @@
+<!-- department-form.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/admin/departments" style="color:var(--gray-600);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem;"><i class="fas fa-arrow-left"></i> Back</a>
+        <span style="color:var(--gray-300);margin:0 0.5rem;">|</span>
+        <span class="page-title"><%= department ? 'Edit' : 'New' %> Department</span>
+      </div>
+    </div>
+    <div class="content" style="max-width:640px;">
+      <% if (error) { %><div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div><% } %>
+      <div class="card">
+        <div class="card-header"><h3 class="card-title"><i class="fas fa-building" style="color:var(--saffron);margin-right:0.5rem;"></i><%= department ? 'Edit Department' : 'Create New Department' %></h3></div>
+        <div class="card-body">
+          <form action="<%= department ? '/admin/departments/edit/' + department._id : '/admin/departments/new' %>" method="POST">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Department Name *</label>
+                <input type="text" name="name" class="form-control" value="<%= department?.name || '' %>" placeholder="e.g. Public Works Department" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Department Code *</label>
+                <input type="text" name="code" class="form-control" value="<%= department?.code || '' %>" placeholder="e.g. PWD" style="text-transform:uppercase;" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control" rows="2" placeholder="Brief description of this department's responsibilities"><%= department?.description || '' %></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Grievance Categories Handled</label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.35rem;">
+                <% ['Infrastructure','Health','Utilities','Education','Sanitation','Police','Revenue','Agriculture','Other'].forEach(cat => { %>
+                  <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;cursor:pointer;padding:0.4rem 0.6rem;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);transition:all 0.15s;">
+                    <input type="checkbox" name="categories" value="<%= cat %>"
+                      <%= department?.categories?.includes(cat) ? 'checked' : '' %>
+                      style="accent-color:var(--saffron);" />
+                    <%= cat %>
+                  </label>
+                <% }) %>
+              </div>
+            </div>
+            <% if (department) { %>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select name="isActive" class="form-control">
+                <option value="on" <%= department?.isActive ? 'selected' : '' %>>Active</option>
+                <option value="off" <%= !department?.isActive ? 'selected' : '' %>>Inactive</option>
+              </select>
+            </div>
+            <% } %>
+            <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+              <button type="submit" class="btn btn-saffron"><i class="fas fa-save"></i> <%= department ? 'Save Changes' : 'Create Department' %></button>
+              <a href="/admin/departments" class="btn btn-outline">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

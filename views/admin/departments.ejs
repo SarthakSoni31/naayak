@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left"><span class="page-title">Departments</span></div>
+      <div class="topbar-right">
+        <a href="/admin/departments/new" class="btn btn-saffron btn-sm"><i class="fas fa-plus"></i> Add Department</a>
+      </div>
+    </div>
+    <div class="content">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;">
+        <% if (departments.length === 0) { %>
+          <div class="card" style="grid-column:1/-1;">
+            <div class="empty-state"><div class="empty-icon">🏛️</div><h3>No departments yet</h3><p>Add a department to start routing grievances</p>
+              <a href="/admin/departments/new" class="btn btn-saffron" style="margin-top:1rem;">Add First Department</a>
+            </div>
+          </div>
+        <% } %>
+        <% departments.forEach(d => { %>
+          <div class="card" style="border-top:3px solid var(--saffron);">
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.75rem;">
+                <div>
+                  <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.1rem;color:var(--navy);"><%= d.name %></div>
+                  <div style="font-size:0.72rem;font-weight:700;color:var(--saffron);letter-spacing:0.08em;text-transform:uppercase;"><%= d.code %></div>
+                </div>
+                <span class="badge <%= d.isActive ? 'badge-resolved' : 'badge-rejected' %>"><%= d.isActive ? 'Active' : 'Inactive' %></span>
+              </div>
+              <p style="font-size:0.8rem;color:var(--gray-600);margin-bottom:1rem;"><%= d.description || 'No description' %></p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+                <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+                  <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:var(--navy);"><%= d.grievanceCount %></div>
+                  <div style="font-size:0.68rem;color:var(--gray-600);">Grievances</div>
+                </div>
+                <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+                  <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:var(--navy);"><%= d.officerCount %></div>
+                  <div style="font-size:0.68rem;color:var(--gray-600);">Officers</div>
+                </div>
+              </div>
+              <% if (d.categories && d.categories.length > 0) { %>
+                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
+                  <% d.categories.forEach(c => { %><span class="badge badge-saffron" style="font-size:0.65rem;"><%= c %></span><% }) %>
+                </div>
+              <% } %>
+              <a href="/admin/departments/edit/<%= d._id %>" class="btn btn-outline btn-sm btn-block">
+                <i class="fas fa-edit"></i> Edit Department
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

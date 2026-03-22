@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/naayak.css" />
+</head>
+<body>
+<div class="layout">
+  <%- include('../partials/citizen-sidebar') %>
+  <div class="main-content">
+    <div class="topbar"><div class="topbar-left"><span class="page-title">Track Grievance</span></div></div>
+    <div class="content" style="max-width:680px;">
+
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header" style="background:var(--navy);">
+          <h3 class="card-title" style="color:var(--white);"><i class="fas fa-search" style="color:var(--saffron);margin-right:0.5rem;"></i>Enter Grievance ID</h3>
+        </div>
+        <div class="card-body">
+          <form action="/citizen/track" method="POST">
+            <div style="display:flex;gap:0.75rem;align-items:flex-end;">
+              <div class="form-group" style="flex:1;margin-bottom:0;">
+                <label class="form-label">Grievance ID</label>
+                <input type="text" name="grievanceId" class="form-control"
+                  placeholder="e.g. NKG-2024-00001"
+                  style="text-transform:uppercase;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;letter-spacing:0.05em;" required />
+              </div>
+              <button type="submit" class="btn btn-saffron" style="height:42px;">
+                <i class="fas fa-search"></i> Track
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+      <% } %>
+
+      <% if (grievance) { %>
+        <div class="card">
+          <div class="card-body">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+              <div>
+                <div style="font-family:'Rajdhani',sans-serif;font-size:0.78rem;font-weight:700;color:var(--gray-400);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.2rem;"><%= grievance.grievanceId %></div>
+                <h3 style="font-size:1.2rem;margin-bottom:0.4rem;"><%= grievance.title %></h3>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                  <% var smMap = {PENDING:'pending',ASSIGNED:'assigned',IN_PROGRESS:'progress',RESOLVED:'resolved',REJECTED:'rejected'}; %>
+                  <span class="badge badge-<%= smMap[grievance.status] || 'pending' %>" style="font-size:0.8rem;padding:0.3rem 0.75rem;"><%= grievance.status.replace('_',' ') %></span>
+                  <span class="badge badge-<%= grievance.urgency.toLowerCase() %>"><span class="urgency-dot <%= grievance.urgency %>"></span><%= grievance.urgency %></span>
+                  <span class="badge badge-primary"><%= grievance.category %></span>
+                </div>
+              </div>
+              <a href="/citizen/grievance/<%= grievance._id %>" class="btn btn-primary btn-sm" style="flex-shrink:0;">Full Details</a>
+            </div>
+
+            <div class="grievance-meta">
+              <div class="meta-item">
+                <div class="meta-label">Department</div>
+                <div class="meta-value"><%= grievance.department ? grievance.department.name : 'Awaiting assignment' %></div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Filed On</div>
+                <div class="meta-value"><%= new Date(grievance.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) %></div>
+              </div>
+              <% if (grievance.resolvedAt) { %>
+              <div class="meta-item">
+                <div class="meta-label">Resolved On</div>
+                <div class="meta-value" style="color:var(--success);font-weight:700;"><%= new Date(grievance.resolvedAt).toLocaleDateString('en-IN') %></div>
+              </div>
+              <% } %>
+            </div>
+
+            <% if (grievance.timeline && grievance.timeline.length > 0) { %>
+              <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--gray-200);">
+                <div class="form-section-title">Latest Update</div>
+                <% var latest = grievance.timeline[grievance.timeline.length - 1]; %>
+                <div style="background:var(--off-white);padding:0.85rem;border-radius:var(--radius-sm);border-left:3px solid var(--saffron);">
+                  <div style="font-size:0.72rem;color:var(--gray-400);margin-bottom:0.2rem;"><%= new Date(latest.timestamp).toLocaleString('en-IN') %></div>
+                  <div style="font-size:0.88rem;color:var(--text);"><%= latest.message %></div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      <% } else if (!error) { %>
+        <div style="text-align:center;padding:2rem;color:var(--gray-400);">
+          <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
+          <p style="font-size:0.9rem;">Enter your Grievance ID (e.g. <strong style="color:var(--navy);">NKG-2024-00001</strong>) to track the status</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<aside class="sidebar">
+  <a href="/admin/dashboard" class="sidebar-brand">
+    <div class="logo-icon">⚖️</div>
+    <div>
+      <div class="logo-text">ना<span>यक</span></div>
+    </div>
+  </a>
+
+  <div class="sidebar-role-badge">⚙️ Admin Portal</div>
+
+  <div class="sidebar-user">
+    <div class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+    <div class="user-info">
+      <span class="user-name"><%= user.name %></span>
+      <span class="user-role">System Administrator</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <span class="nav-section-title">Overview</span>
+    <a href="/admin/dashboard" class="nav-link <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard
+    </a>
+    <a href="/admin/analytics" class="nav-link <%= currentPath === '/admin/analytics' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-chart-bar"></i></span> Analytics
+    </a>
+
+    <span class="nav-section-title">Grievances</span>
+    <a href="/admin/grievances" class="nav-link <%= currentPath.startsWith('/admin/grievances') ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-file-alt"></i></span> All Grievances
+    </a>
+    <a href="/admin/grievances?urgency=HIGH" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-exclamation-circle"></i></span> High Priority
+      <span class="nav-badge" id="highCount">!</span>
+    </a>
+    <a href="/admin/grievances?status=PENDING" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-clock"></i></span> Pending Assignment
+    </a>
+
+    <span class="nav-section-title">Management</span>
+    <a href="/admin/adhikaris" class="nav-link <%= currentPath.startsWith('/admin/adhikaris') ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-id-badge"></i></span> Officers
+    </a>
+    <a href="/admin/adhikaris?approved=false" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-user-clock"></i></span> Pending Approvals
+    </a>
+    <a href="/admin/citizens" class="nav-link <%= currentPath === '/admin/citizens' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-users"></i></span> Citizens
+    </a>
+    <a href="/admin/departments" class="nav-link <%= currentPath.startsWith('/admin/departments') ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-building"></i></span> Departments
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="/logout" class="btn btn-outline btn-block btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+</aside>

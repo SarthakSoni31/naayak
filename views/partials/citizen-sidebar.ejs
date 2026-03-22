@@ -1,0 +1,58 @@
+<aside class="sidebar">
+  <a href="/citizen/dashboard" class="sidebar-brand">
+    <div class="logo-icon">⚖️</div>
+    <div>
+      <div class="logo-text">ना<span>यक</span></div>
+    </div>
+  </a>
+
+  <div class="sidebar-role-badge">👤 Citizen Portal</div>
+
+  <div class="sidebar-user">
+    <div class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+    <div class="user-info">
+      <span class="user-name"><%= user.name %></span>
+      <span class="user-role"><%= user.district %>, <%= user.state %></span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <span class="nav-section-title">My Portal</span>
+    <a href="/citizen/dashboard" class="nav-link <%= currentPath === '/citizen/dashboard' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-home"></i></span> Dashboard
+    </a>
+    <a href="/citizen/grievance/new" class="nav-link" style="<%= currentPath === '/citizen/grievance/new' ? '' : '' %>">
+      <span class="nav-icon"><i class="fas fa-plus-circle"></i></span> File New Grievance
+    </a>
+
+    <span class="nav-section-title">My Grievances</span>
+    <a href="/citizen/grievances" class="nav-link <%= currentPath === '/citizen/grievances' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-list"></i></span> All Grievances
+    </a>
+    <a href="/citizen/grievances?status=PENDING" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-clock"></i></span> Pending
+    </a>
+    <a href="/citizen/grievances?status=IN_PROGRESS" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-spinner"></i></span> In Progress
+    </a>
+    <a href="/citizen/grievances?status=RESOLVED" class="nav-link">
+      <span class="nav-icon"><i class="fas fa-check-circle"></i></span> Resolved
+    </a>
+
+    <span class="nav-section-title">Track</span>
+    <a href="/citizen/track" class="nav-link <%= currentPath === '/citizen/track' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-search"></i></span> Track by ID
+    </a>
+
+    <span class="nav-section-title">Account</span>
+    <a href="/citizen/profile" class="nav-link <%= currentPath === '/citizen/profile' ? 'active' : '' %>">
+      <span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Profile
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="/logout" class="btn btn-outline btn-block btn-sm" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+</aside>
